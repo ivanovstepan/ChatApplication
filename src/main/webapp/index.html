@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ewr Chat</title>
+    <link rel="stylesheet" href="resourse/css/main.css" >
+    <link rel="stylesheet"  href="resourse/bootstrap/bootstrap.min.css">
+    <script src="resourse/js/scripts.js"></script>
+  </head>
+  
+  <body onload="run();" >
+    <div class="container reader one">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand">Chat</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2"> 
+            <ul class="nav navbar-nav navbar-right">
+              <li class="btn offline " id="connection"></li>
+            
+            </ul>
+        </div>
+        </div>
+      </nav>
+      <div class="jumbotron " id="main" >
+        <div class="container">
+          <div class="col-lg-8  " >
+            <div class="col-md-12 scrol MessagesPlace " >
+            </div>
+          </div>
+          <div  class="col-lg-4 ">   
+           <div class="col-lg-12">
+             <form action="#">
+              <div class="form-group">
+               <label >Name</label>
+               <input type="text" class="form-control" id="NameText" placeholder="Name">
+               </div>
+              <button type="submit" class="btn btn-name" >Enter</button>
+                </form>
+            </div>        
+            <div class="col-lg-12 well scrol" style="margin-top:10px;" >
+              <div class="form-vertical users " align="left" action="#" >
+                <div class="form-group  user">
+                  <label class="btn btn-danger">Users : </label>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="SendMessage" >
+        <div class="container">
+          <div class="col-lg-8" align="center">
+            <input type="text" class="form-control" placeholder="to Delete Down/to Edit Up"  id="MessageText" style="margin-top:10px;" >
+          </div>
+         </div>
+        <div class="container" style="margin-top:5px;">
+          <div class="col-lg-1">
+            <button type="submit" class="btn btn-add">Send</button>
+          </div>
+        
+         </div>
+       </div>
+      </div>
+
+  </body>
+</html>

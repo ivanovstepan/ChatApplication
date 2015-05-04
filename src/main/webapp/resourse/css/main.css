@@ -1,0 +1,29 @@
+
+#main {
+  margin-bottom:3px;
+}
+.col-md-12{
+  border: 2px solid black;
+  height: 400px;
+  border-radius: 5px;
+}
+.scrol{
+  overflow: auto;
+  height: 400;
+}
+#user{
+	margin-top:15px;
+}
+
+
+.online {
+	background-color: #ffff00;
+  	border-color: #ffff00;
+  	height: 26px;
+}
+
+.offline {
+	height: 26px;
+	background-color: #d9534f;
+  	border-color: #d43f3a;
+}
