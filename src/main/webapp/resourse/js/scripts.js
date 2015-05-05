@@ -168,7 +168,7 @@
 	function onAddButtonClick(){
 		var MessageText = document.getElementById('MessageText');
 		var newMessage = theMessage(''+indexForChange+'',MessageText.value,name);
-		indexForChange++;
+        indexForChange++;
 		if(MessageText.value == '')
 			return;
 		MessageText.value = '';
@@ -177,14 +177,15 @@
 			changeMessages(newMessage, function () {  });
 		}
 		else
+
 		storeMessages(newMessage, function() {
 			console.log('message.Message sent ' + newMessage.text);
 		});
 	} 
 
 function changeMessages(changeMessage, continueWith) {
-    put(appState.mainUrl, JSON.stringify(changeMessage), function () {
-        getAllMessages();
+    put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage), function () {
+        continueWith();
     });
 }
 function addAllMessages(message) {

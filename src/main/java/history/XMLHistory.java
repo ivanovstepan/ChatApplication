@@ -16,13 +16,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class XMLHistory {
     private static final String STORAGE_LOCATION = System.getProperty("user.home") +  File.separator + "history.xml"; // history.xml will be located in the home directory
-    private static final String TASKS = "tasks";
-    private static final String TASK = "task";
+    private static final String MESSAGES = "messages";
+    private static final String MESSAGE = "message";
     private static final String ID = "id";
     private static final String DESCRIPTION = "description";
     private static final String USER = "user";
@@ -35,7 +37,7 @@ public final class XMLHistory {
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
         Document doc = docBuilder.newDocument();
-        Element rootElement = doc.createElement(TASKS);
+        Element rootElement = doc.createElement(MESSAGES);
         doc.appendChild(rootElement);
 
         Transformer transformer = getTransformer();
@@ -44,6 +46,7 @@ public final class XMLHistory {
         StreamResult result = new StreamResult(new File(STORAGE_LOCATION));
         transformer.transform(source, result);
     }
+
 
     public static synchronized void addData(Message message) throws ParserConfigurationException, SAXException, IOException, TransformerException {
         System.out.println(message + " vot real message");
@@ -54,7 +57,7 @@ public final class XMLHistory {
 
         Element root = document.getDocumentElement(); // Root <tasks> element
 
-        Element taskElement = document.createElement(TASK);
+        Element taskElement = document.createElement(MESSAGE);
         root.appendChild(taskElement);
 
 
@@ -69,6 +72,11 @@ public final class XMLHistory {
         Element user = document.createElement(USER);
         user.appendChild(document.createTextNode(message.getUser()));
         taskElement.appendChild(user);
+
+        SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+        Element time = document.createElement("date");
+        time.appendChild(document.createTextNode(format1.format(new Date())));
+        taskElement.appendChild(time);
 
         DOMSource source = new DOMSource(document);
 
@@ -118,20 +126,20 @@ public final class XMLHistory {
         return file.exists();
     }
 
-    public static synchronized List<Message> getTasks() throws SAXException, IOException, ParserConfigurationException {
+    public static synchronized List<Message> getMessages() throws SAXException, IOException, ParserConfigurationException {
         List<Message> tasks = new ArrayList<Message>();
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(STORAGE_LOCATION);
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement(); // Root <tasks> element
-        NodeList taskList = root.getElementsByTagName(TASK);
+        NodeList taskList = root.getElementsByTagName(MESSAGE);
         for (int i = 0; i < taskList.getLength(); i++) {
             Element taskElement = (Element) taskList.item(i);
             String  id = taskElement.getElementsByTagName(ID).item(0).getTextContent();
             String description = taskElement.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
             String  user = taskElement.getElementsByTagName(USER).item(0).getTextContent();
-            tasks.add(new Message(description,user,id));
+            tasks.add(new Message(id,description,user));
         }
         return tasks;
     }
@@ -142,12 +150,12 @@ public final class XMLHistory {
         Document document = documentBuilder.parse(STORAGE_LOCATION);
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement(); // Root <tasks> element
-        return root.getElementsByTagName(TASK).getLength();
+        return root.getElementsByTagName(MESSAGE).getLength();
     }
 
     private static Node getNodeById(Document doc, String id) throws XPathExpressionException {
         XPath xpath = XPathFactory.newInstance().newXPath();
-        XPathExpression expr = xpath.compile("//" + TASK + "[@id='" + id + "']");
+        XPathExpression expr = xpath.compile("//" + MESSAGE + "[@id='" + id + "']");
         return (Node) expr.evaluate(doc, XPathConstants.NODE);
     }
 

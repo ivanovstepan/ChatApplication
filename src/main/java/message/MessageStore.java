@@ -31,14 +31,21 @@ public class MessageStore {
         public static int getSize() {
             return INSTANSE.size();
         }
+        public static void showAllMessages (){
+            for (Message message : INSTANSE){
+                System.out.println("{"+message.getUser()+"} : {"+message.getDescription()+"}");
+            }
+        }
 
         public static List<Message> getSubTasksByIndex(int index) {
             return INSTANSE.subList(index, INSTANSE.size());
         }
 
-        public static Message getTaskById(int  id) {
+        public static Message getTaskById(String  id) {
             for (Message message : INSTANSE) {
+                System.out.println(message+"  "+message.getId());
                 if (message.getId().equals(id)) {
+                    System.out.print(" DA ");
                     return message;
                 }
             }

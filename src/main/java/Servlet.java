@@ -47,7 +47,7 @@ public class Servlet extends HttpServlet {
             //System.out.println(index+" vot Index");
             logger.info("Index " + index);
             String tasks = formResponse(index);
-            System.out.println(tasks+" vot tasks");
+            //System.out.println(tasks+" vot tasks");
             response.setContentType(ServletUtil.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
             out.print(tasks);
@@ -79,15 +79,23 @@ public class Servlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPut");
         String data = ServletUtil.getMessageBody(request);
+        System.out.println(data+" vot");
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
+            System.out.println(json+" vot json");
             Message task = jsonToTask(json);
+            System.out.println(task+" vot task");
+
             String id = task.getId();
-            Message taskToUpdate = MessageStore.getTaskById(new Integer(id));
+            System.out.println(id+" vot id");
+
+            Message taskToUpdate = MessageStore.getTaskById(id);
+            System.out.println(taskToUpdate+" vot tasktoupdata");
+
             if (taskToUpdate != null) {
                 taskToUpdate.setDescription(task.getDescription());
-                //taskToUpdate.setUser(task.getUser());
+                taskToUpdate.setUser(task.getUser());
                 XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {
@@ -109,7 +117,8 @@ public class Servlet extends HttpServlet {
 
     private void loadHistory() throws SAXException, IOException, ParserConfigurationException, TransformerException  {
         if (XMLHistory.doesStorageExist()) {
-            MessageStore.addAll(XMLHistory.getTasks());
+            MessageStore.addAll(XMLHistory.getMessages());
+            MessageStore.showAllMessages();
         } else {
             XMLHistory.createStorage();
             addStubData();
@@ -118,7 +127,7 @@ public class Servlet extends HttpServlet {
 
     private void addStubData() throws ParserConfigurationException, TransformerException {
         Message[] stubTasks = {
-                new Message( "-1","Create markup","Anna" ),
+                //new Message( "-1","Create markup","Anna" ),
                 //new Message("2", "Learn JavaScript")
                 };
         MessageStore.addAll(stubTasks);
