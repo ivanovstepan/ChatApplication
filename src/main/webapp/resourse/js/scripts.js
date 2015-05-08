@@ -43,7 +43,7 @@
 		}
 		)
 		getAllMessages();
-		//updateMessages();
+		updateMessages();
 	}
 
 	function getAllMessages (continueWith) {
@@ -225,7 +225,7 @@ function addAllMessages(message) {
 	 document.getElementById('connection').className="btn online";
 	}
 	
-/*function updateMessages(continueWith) {
+function updateMessages(continueWith) {
     var url = appState.mainUrl + '?token=' + appState.token;
     get(url, function (responseText) {
         var response = JSON.parse(responseText).tasks;
@@ -241,8 +241,9 @@ function addAllMessages(message) {
     }, function(){
     	document.getElementById('connection').className="btn offline";
     });
+ setTimeout(updateMessages, 1000);
 
-}*/
+}
 
 
 

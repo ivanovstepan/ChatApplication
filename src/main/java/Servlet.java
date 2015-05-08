@@ -62,6 +62,7 @@ public class Servlet extends HttpServlet {
         logger.info("doPost");
         String data = ServletUtil.getMessageBody(request);
 
+
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
@@ -94,10 +95,17 @@ public class Servlet extends HttpServlet {
             System.out.println(taskToUpdate+" vot tasktoupdata");
 
             if (taskToUpdate != null) {
+                System.out.println("work1");
                 taskToUpdate.setDescription(task.getDescription());
+                System.out.println(taskToUpdate+" vot description");
+
                 taskToUpdate.setUser(task.getUser());
+                System.out.println(taskToUpdate+" vot user");
+
                 XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
+                System.out.println(" GOOOD");
+
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }

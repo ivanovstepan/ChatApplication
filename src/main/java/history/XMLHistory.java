@@ -61,9 +61,7 @@ public final class XMLHistory {
         root.appendChild(taskElement);
 
 
-        Element id = document.createElement(ID);
-        id.appendChild(document.createTextNode(message.getId()));
-        taskElement.appendChild(id);
+        taskElement.setAttribute(ID, message.getId());
 
         Element description = document.createElement(DESCRIPTION);
         description.appendChild(document.createTextNode(message.getDescription()));
@@ -92,7 +90,9 @@ public final class XMLHistory {
         Document document = documentBuilder.parse(STORAGE_LOCATION);
         document.getDocumentElement().normalize();
         Node taskToUpdate = getNodeById(document, message.getId());
-
+        System.out.println(message+" vot MESSAGE ");
+        System.out.println(message.getId());
+        System.out.println(taskToUpdate+" vot NODE ");
         if (taskToUpdate != null) {
 
             NodeList childNodes = taskToUpdate.getChildNodes();
@@ -108,7 +108,6 @@ public final class XMLHistory {
                 if (USER.equals(node.getNodeName())) {
                     node.setTextContent(message.getUser());
                 }
-
             }
 
             Transformer transformer = getTransformer();
@@ -127,7 +126,7 @@ public final class XMLHistory {
     }
 
     public static synchronized List<Message> getMessages() throws SAXException, IOException, ParserConfigurationException {
-        List<Message> tasks = new ArrayList<Message>();
+        List<Message> tasks = new ArrayList<>();
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(STORAGE_LOCATION);
@@ -155,7 +154,9 @@ public final class XMLHistory {
 
     private static Node getNodeById(Document doc, String id) throws XPathExpressionException {
         XPath xpath = XPathFactory.newInstance().newXPath();
+        System.out.println(xpath+" vot xpath");
         XPathExpression expr = xpath.compile("//" + MESSAGE + "[@id='" + id + "']");
+        System.out.println(expr+" vot expr");
         return (Node) expr.evaluate(doc, XPathConstants.NODE);
     }
 
