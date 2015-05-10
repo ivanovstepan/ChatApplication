@@ -59,10 +59,12 @@
     }, function(){
     	document.getElementById('connection').className="btn offline";
     });
+        setTimeout(continueWith, 1000);
 	}
 
 	function createAllMessages(messageList) {
 		for(var i = 0; i < messageList.length; i++)
+        if(messageList[i].delete!="true")
 			addMessage(messageList[i]);
 		
 	}
@@ -75,19 +77,17 @@
 			var element  = messages[i];
 			 
 			if(names[i].innerHTML==name+" : " && messages[i].getElementsByClassName("onlyMessage")[0].innerHTML!=" message has been deleted"){
-				deleteMessageFromServer(i,function () {});
+                deleteMessageFromServer(theMessage(i,"message has been deleted",name,true), function () {  });
 		        messages[i].innerHTML='<span class ="nameOfUser">' + name + ' : </span><span class="onlyMessage"> message has been deleted</span>'
 		        break;
 			}
 		}
 	}
 
-	function deleteMessageFromServer(index,continueWith) {
-		 var indexToken = index*8+11; 
-		 var url = appState.mainUrl + '?token=' + "TN" +indexToken.toString() + "EN";
-		    del(url, function () {
-		     continueWith && continueWith();
-		    });
+	function deleteMessageFromServer(message,continueWith) {
+        del(appState.mainUrl + '?id=' + message.id, JSON.stringify(message), function () {
+            continueWith();
+        });
 }
 
 	function editLastMessage(){
@@ -279,8 +279,8 @@ function post(url, data, continueWith, continueWithError) {
 function put(url, data, continueWith, continueWithError) {
     ajax('PUT', url, data, continueWith, continueWithError);
 }
-function del(url, continueWith, continueWithError) {
-    ajax('DELETE', url, null, continueWith, continueWithError);
+function del(url, data, continueWith, continueWithError) {
+    ajax('DELETE', url, data, continueWith, continueWithError);
 }
 function storeMessages(sendMessage, continueWith) {
     post(appState.mainUrl, JSON.stringify(sendMessage), function () {

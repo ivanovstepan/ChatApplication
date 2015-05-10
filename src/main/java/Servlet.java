@@ -115,6 +115,36 @@ public class Servlet extends HttpServlet {
         }
     }
 
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("doDelete");
+        String data = ServletUtil.getMessageBody(request);
+        logger.info(data);
+        try {
+            JSONObject json = stringToJson(data);
+            Message task = jsonToTask(json);
+            String id = task.getId();
+            Message taskToUpdate = MessageStore.getTaskById(id);
+            if (taskToUpdate != null) {
+                System.out.println("work1");
+                taskToUpdate.setDescription(task.getDescription());
+                System.out.println(taskToUpdate+" vot description");
+
+                taskToUpdate.setUser(task.getUser());
+                System.out.println(taskToUpdate+" vot user");
+                taskToUpdate.setDeleted(true);
+                XMLHistory.updateData(taskToUpdate);
+                response.setStatus(HttpServletResponse.SC_OK);
+                System.out.println(" GOOOD");
+
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
+            }
+        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException e) {
+            logger.error(e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private String formResponse(int index) {
         JSONObject jsonObject = new JSONObject();
