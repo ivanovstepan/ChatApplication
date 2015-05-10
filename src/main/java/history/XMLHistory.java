@@ -60,9 +60,11 @@ public final class XMLHistory {
         Element taskElement = document.createElement(MESSAGE);
         root.appendChild(taskElement);
 
-
         taskElement.setAttribute(ID, message.getId());
-
+        /*Element id = document.createElement(ID);
+        id.appendChild(document.createTextNode(message.getId()));
+        taskElement.appendChild(id);
+*/
         Element description = document.createElement(DESCRIPTION);
         description.appendChild(document.createTextNode(message.getDescription()));
         taskElement.appendChild(description);
@@ -135,7 +137,7 @@ public final class XMLHistory {
         NodeList taskList = root.getElementsByTagName(MESSAGE);
         for (int i = 0; i < taskList.getLength(); i++) {
             Element taskElement = (Element) taskList.item(i);
-            String  id = taskElement.getElementsByTagName(ID).item(0).getTextContent();
+            String  id = taskElement.getAttribute(ID);
             String description = taskElement.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
             String  user = taskElement.getElementsByTagName(USER).item(0).getTextContent();
             tasks.add(new Message(id,description,user));

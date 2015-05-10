@@ -3,7 +3,7 @@
 	var indexForChange=0;
 		var theMessage = function(id,text, userName) {
 		return {
-            id: id,
+            id: ''+id+'',
 			description:text,
 			user : userName
 
@@ -43,7 +43,7 @@
 		}
 		)
 		getAllMessages();
-		updateMessages();
+		//updateMessages();
 	}
 
 	function getAllMessages (continueWith) {
@@ -167,13 +167,14 @@
 
 	function onAddButtonClick(){
 		var MessageText = document.getElementById('MessageText');
-		var newMessage = theMessage(''+indexForChange+'',MessageText.value,name);
+		var newMessage = theMessage(indexForChange,MessageText.value,name);
         indexForChange++;
 		if(MessageText.value == '')
 			return;
 		MessageText.value = '';
 		if(change==1){
 			change=0;
+            updateMessage(newMessage);
 			changeMessages(newMessage, function () {  });
 		}
 		else
@@ -181,7 +182,20 @@
 		storeMessages(newMessage, function() {
 			console.log('message.Message sent ' + newMessage.text);
 		});
-	} 
+	}
+    function updateMessage(message){
+        var messages = document.getElementsByClassName('SeeOneMessage');
+        var names = document.getElementsByClassName('nameOfUser');
+        if(!messages.length)return;
+        for (var i=messages.length-1;i>0;i--){
+            var element  = messages[i];
+            if(names[i].innerHTML==name+" : " && messages[i].getElementsByClassName("onlyMessage")[0].innerHTML!=" message has been deleted"){
+                messages[i].innerHTML='<span class ="nameOfUser">' + name + ' : </span><span class="onlyMessage">'+ message.description+'</span>'
+                break;
+            }
+        }
+
+    }
 
 function changeMessages(changeMessage, continueWith) {
     put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage), function () {
@@ -241,7 +255,6 @@ function updateMessages(continueWith) {
     }, function(){
     	document.getElementById('connection').className="btn offline";
     });
- setTimeout(updateMessages, 1000);
 
 }
 
