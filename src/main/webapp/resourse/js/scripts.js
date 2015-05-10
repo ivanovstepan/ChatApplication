@@ -22,7 +22,7 @@
 		history:[],
 		token : 'TN11EN'
 	};
-	function run(){
+function run(){
 		var appContainer = document.getElementsByClassName('reader')[0];
 		appContainer.addEventListener('click', delegateEvent);
 		appContainer.addEventListener('change', delegateEvent);
@@ -44,10 +44,9 @@
 		}
 		)
 		getAllMessages();
-		//updateMessages();
 	}
 
-	function getAllMessages (continueWith) {
+function getAllMessages (continueWith) {
 		var url = appState.mainUrl + '?token=' + appState.token;
 		get(url, function(responseText) {
 			checkConnect();
@@ -62,14 +61,14 @@
         setTimeout(continueWith, 1000);
 	}
 
-	function createAllMessages(messageList) {
+function createAllMessages(messageList) {
 		for(var i = 0; i < messageList.length; i++)
         if(messageList[i].delete!="true")
 			addMessage(messageList[i]);
 		
 	}
 	
-	function deleteLastMessage(){
+function deleteLastMessage(){
 		var messages = document.getElementsByClassName('SeeOneMessage');
 		var names = document.getElementsByClassName('nameOfUser');
 		if(!messages.length)return;
@@ -84,13 +83,13 @@
 		}
 	}
 
-	function deleteMessageFromServer(message,continueWith) {
+function deleteMessageFromServer(message,continueWith) {
         del(appState.mainUrl + '?id=' + message.id, JSON.stringify(message), function () {
             continueWith();
         });
-}
+	}
 
-	function editLastMessage(){
+function editLastMessage(){
 
 		change=1;
 		var messages = document.getElementsByClassName('SeeOneMessage');
@@ -105,16 +104,14 @@
 			}
 		}
 
-		
-
 	}
 
-	function delegateName(evtObj){
+function delegateName(evtObj){
 		if(evtObj.type === 'click' && evtObj.target.classList.contains('btn-name')){
 			NameAddButtonClick(evtObj);
 		}
 	}
-	function NameAddButtonClick(){
+function NameAddButtonClick(){
 		var MessageText = document.getElementById('NameText');
 		name=MessageText.value;
 		addName(MessageText.value);
@@ -123,7 +120,7 @@
 
 	}
 
-	function addName(value){
+function addName(value){
 		if(!value){ return; }
 		var item = createName(value);
 		var divItem =document.createElement('div');
@@ -135,7 +132,7 @@
 		items.appendChild(divItem);
 	}
 
-	function createName(text){
+function createName(text){
 		var buttonItem = document.createElement('button');
 		buttonItem.classList.add('btn');
 		buttonItem.classList.add('btn-info');
@@ -146,7 +143,7 @@
 		return buttonItem;
 	}
 
-	 function editName() {
+function editName() {
 		 document.getElementById("NameText").disabled= false;
 		 var user = document.getElementsByClassName("changeName");
 		 var element=user[user.length-1];
@@ -154,19 +151,19 @@
 		 deleteUser();
 	}
 
-	function deleteUser(){
+function deleteUser(){
 		var users = document.getElementsByClassName('changeName');	
 		var element  = users[users.length-1];
 		element.parentNode.removeChild(element);
 	}
 
-	function delegateEvent(evtObj) {
+function delegateEvent(evtObj) {
 		if(evtObj.type === 'click' && evtObj.target.classList.contains('btn-add')){
 			onAddButtonClick(evtObj);
 		}	
 	}
 
-	function onAddButtonClick(){
+function onAddButtonClick(){
 		var MessageText = document.getElementById('MessageText');
 		var newMessage = theMessage(indexForChange,MessageText.value,name);
         indexForChange++;
@@ -184,7 +181,7 @@
 			console.log('message.Message sent ' + newMessage.text);
 		});
 	}
-    function updateMessage(message){
+function updateMessage(message){
         var messages = document.getElementsByClassName('SeeOneMessage');
         var names = document.getElementsByClassName('nameOfUser');
         if(!messages.length)return;
@@ -202,7 +199,7 @@ function changeMessages(changeMessage, continueWith) {
     put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage), function () {
         continueWith();
     });
-}
+	}
 function addAllMessages(message) {
     if (messageList[message.id] == null) {
        var item = createMessage(message);
@@ -210,8 +207,8 @@ function addAllMessages(message) {
 		messageList.push(message);
 		items.appendChild(item);
     }
-}
-	function addMessage(message) {
+	}
+function addMessage(message) {
 
 		if(!message){
 			return;
@@ -222,7 +219,7 @@ function addAllMessages(message) {
 		messageList.push(message);
 		items.appendChild(item);
 	}
-	function createMessage(text){
+function createMessage(text){
 		var divItem = document.createElement('div');
 		var htmlAsText = '<div class="SeeOneMessage" ><span class ="nameOfUser"> name : </span><span class="onlyMessage">text</span></div>';
 		divItem.innerHTML= htmlAsText;
@@ -230,37 +227,16 @@ function addAllMessages(message) {
 		return divItem.firstChild;
 	}
 
-	function updateItem(divItem, task){
+function updateItem(divItem, task){
 		divItem.setAttribute('data', '"'+task.id+'"');
 		divItem.lastChild.textContent = task.description;
 		divItem.firstChild.innerHTML=task.user +' : ' ;
 	} 
 
-	function checkConnect(evtObj) {
+function checkConnect(evtObj) {
 	 document.getElementById('connection').className="btn online";
 	}
 	
-function updateMessages(continueWith) {
-    var url = appState.mainUrl + '?token=' + appState.token;
-    get(url, function (responseText) {
-        var response = JSON.parse(responseText).tasks;
-        checkConnect();
-        for (var i = 0; i < response.length; i++) {
-            var message = response[i];
-
-                addAllMessages(message);
-
-
-        }
-        continueWith && continueWith();
-    }, function(){
-    	document.getElementById('connection').className="btn offline";
-    });
-
-}
-
-
-
 function addChangeMessage(message) {
     if (messageList[message.id] != null) {
         var select = document.getElementsByClassName("onlyMessage")[message.id];
@@ -288,7 +264,7 @@ function storeMessages(sendMessage, continueWith) {
     });
 }
 
-	function isError(text) {
+function isError(text) {
 		if(text == "")
 			return false;
 		
@@ -301,7 +277,7 @@ function storeMessages(sendMessage, continueWith) {
 		return !!obj.error;
 	}
 
-	function ajax(method, url, data, continueWith, continueWithError) {
+function ajax(method, url, data, continueWith, continueWithError) {
 		var xhr = new XMLHttpRequest();
 
 		continueWithError = continueWithError || defaultErrorHandler;
@@ -340,12 +316,12 @@ function storeMessages(sendMessage, continueWith) {
 
 		xhr.send(data);
 	}
-	function sendMessage(message, continueWith) {
+function sendMessage(message, continueWith) {
 		post(appState.mainUrl, JSON.stringify(message), function(){
 			getAllMessages();
 		});
 	}
 
-	function defaultErrorHandler(message) {
+function defaultErrorHandler(message) {
 		console.error(message);
 	}
