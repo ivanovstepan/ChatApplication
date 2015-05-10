@@ -1,11 +1,12 @@
 	var name;
 	var change =0;
 	var indexForChange=0;
-		var theMessage = function(id,text, userName) {
+		var theMessage = function(id,text, userName, del) {
 		return {
             id: ''+id+'',
 			description:text,
-			user : userName
+			user : userName,
+            delete : !!del
 
 		};
 	};

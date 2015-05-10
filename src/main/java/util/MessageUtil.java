@@ -14,6 +14,7 @@ public final class MessageUtil {
     private static final String ID = "id";
     private static final String DESCRIPTION = "description";
     private static final String USER = "user";
+    private static final String DELETE ="delete";
 
     private MessageUtil() {
     }
@@ -33,12 +34,15 @@ public final class MessageUtil {
     }
 
     public static Message jsonToTask(JSONObject json) {
+        System.out.print(json+ " vot");
         Object id = json.get(ID);
         Object description = json.get(DESCRIPTION);
         Object user = json.get(USER);
+        Object delete = json.get(DELETE);
 
-        if (id != null && description != null && user != null) {
-            return new Message( (String)id,(String) description ,(String) user) {
+
+        if (id != null && description != null && user != null && delete!=null) {
+            return new Message( (String)id,(String) description ,(String) user,(Boolean) delete) {
             };
         }
         return null;

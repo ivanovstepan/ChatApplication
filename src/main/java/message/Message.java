@@ -6,14 +6,27 @@ public class Message  {
     private String description;
     private String user;
 
-    public Message(   String  id,String description,String user) {
+
+
+    private boolean deleted;
+
+    public Message(   String  id,String description,String user, boolean del) {
         this.id = id;
         this.description = description;
         this.user = user;
+        this.deleted=del;
     }
 
     public String  getId() {
         return id;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setId( String  id) {
@@ -36,8 +49,8 @@ public class Message  {
         this.user = user;
     }
 
+
     public String toString() {
-        return "{\"id\":\"" + this.id + "\",\"description\":\"" + this.description + "\",\"user\":\"" + this.user + "\"}" +
-                "";
+        return "{\"id\":\"" + this.id + "\",\"description\":\"" + this.description + "\",\"user\":\"" + this.user + "\",\"delete\":\"" + this.isDeleted() + "\"}";
     }
 }

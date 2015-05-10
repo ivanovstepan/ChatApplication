@@ -28,6 +28,7 @@ public final class XMLHistory {
     private static final String ID = "id";
     private static final String DESCRIPTION = "description";
     private static final String USER = "user";
+    private static final String DELETE ="delete";
 
     private XMLHistory() {
     }
@@ -78,6 +79,10 @@ public final class XMLHistory {
         time.appendChild(document.createTextNode(format1.format(new Date())));
         taskElement.appendChild(time);
 
+        Element delete = document.createElement(DELETE);
+        delete.appendChild(document.createTextNode(Boolean.toString(message.isDeleted())));
+        taskElement.appendChild(delete);
+
         DOMSource source = new DOMSource(document);
 
         Transformer transformer = getTransformer();
@@ -110,6 +115,9 @@ public final class XMLHistory {
                 if (USER.equals(node.getNodeName())) {
                     node.setTextContent(message.getUser());
                 }
+                if (DELETE.equals(node.getNodeName())){
+                    node.setTextContent(Boolean.toString(message.isDeleted()));
+                }
             }
 
             Transformer transformer = getTransformer();
@@ -140,7 +148,8 @@ public final class XMLHistory {
             String  id = taskElement.getAttribute(ID);
             String description = taskElement.getElementsByTagName(DESCRIPTION).item(0).getTextContent();
             String  user = taskElement.getElementsByTagName(USER).item(0).getTextContent();
-            tasks.add(new Message(id,description,user));
+            boolean deleted = Boolean.valueOf(taskElement.getElementsByTagName(DELETE).item(0).getTextContent());
+            tasks.add(new Message(id,description,user,deleted));
         }
         return tasks;
     }
