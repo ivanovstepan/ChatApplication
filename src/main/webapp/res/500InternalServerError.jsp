@@ -4,7 +4,7 @@
     <title>Internal Server Error</title>
 </head>
 <body>
-<img src="imagen.jpg.jpg.jpg">
+<img src="/res/imagen.jpg">
 
 </body>
 </html>

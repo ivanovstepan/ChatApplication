@@ -7,16 +7,16 @@
 
     <error-page>
         <error-code>400</error-code>
-        <location>/WEB-INF/res/400BadRequest.jsp</location>
+        <location>/res/400BadRequest.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/res/404.jsp</location>
+        <location>/res/404NotFound.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>500</error-code>
-        <location>/WEB-INF/res500InternalServerError.jsp</location>
+        <location>/res/500InternalServerError.jsp</location>
     </error-page>
 </web-app>
