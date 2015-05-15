@@ -15,7 +15,7 @@
 		var random = Math.random() * Math.random();
 		return Math.floor(date * random).toString();
 	};
-	var messageList = [];
+	var Messages = [];
 
 	var appState = {
 		mainUrl : 'chat',
@@ -44,6 +44,7 @@ function run(){
 		}
 		)
 		getAllMessages();
+
 	}
 
 function getAllMessages (continueWith) {
@@ -65,7 +66,7 @@ function createAllMessages(messageList) {
 		for(var i = 0; i < messageList.length; i++)
         if(messageList[i].delete!="true")
 			addMessage(messageList[i]);
-		
+    indexForChange=Messages.length;
 	}
 	
 function deleteLastMessage(){
@@ -85,7 +86,7 @@ function deleteLastMessage(){
 
 function deleteMessageFromServer(message,continueWith) {
         del(appState.mainUrl + '?id=' + message.id, JSON.stringify(message), function () {
-            continueWith();
+            getAllMessages();
         });
 	}
 
@@ -197,14 +198,14 @@ function updateMessage(message){
 
 function changeMessages(changeMessage, continueWith) {
     put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage), function () {
-        continueWith();
+        getAllMessages();
     });
 	}
 function addAllMessages(message) {
-    if (messageList[message.id] == null) {
+    if (Messages[message.id] == null) {
        var item = createMessage(message);
 		var items = document.getElementsByClassName('MessagesPlace')[0];
-		messageList.push(message);
+		Messages.push(message);
 		items.appendChild(item);
     }
 	}
@@ -215,8 +216,8 @@ function addMessage(message) {
 		}
 		var item = createMessage(message);
 		var items = document.getElementsByClassName('MessagesPlace')[0];
-		var  messageList = appState.history;
-		messageList.push(message);
+		Messages = appState.history;
+		Messages.push(message);
 		items.appendChild(item);
 	}
 function createMessage(text){
@@ -238,10 +239,10 @@ function checkConnect(evtObj) {
 	}
 	
 function addChangeMessage(message) {
-    if (messageList[message.id] != null) {
+    if (Messages[message.id] != null) {
         var select = document.getElementsByClassName("onlyMessage")[message.id];
         select.innerHTML = message.message;
-        messageList[message.id] = message;
+        Messages[message.id] = message;
     }
 }
 
@@ -298,6 +299,8 @@ function ajax(method, url, data, continueWith, continueWithError) {
 			}
 
 			continueWith(xhr.responseText);
+           // ajax(method, url, data, continueWith, continueWithError)
+
 		};    
 
 		xhr.ontimeout = function () {
@@ -318,7 +321,7 @@ function ajax(method, url, data, continueWith, continueWithError) {
 	}
 function sendMessage(message, continueWith) {
 		post(appState.mainUrl, JSON.stringify(message), function(){
-			getAllMessages();
+            continueWith();
 		});
 	}
 

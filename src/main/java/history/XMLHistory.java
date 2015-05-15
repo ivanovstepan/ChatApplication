@@ -58,30 +58,27 @@ public final class XMLHistory {
 
         Element root = document.getDocumentElement(); // Root <tasks> element
 
-        Element taskElement = document.createElement(MESSAGE);
-        root.appendChild(taskElement);
+        Element messageElement = document.createElement(MESSAGE);
+        root.appendChild(messageElement);
 
-        taskElement.setAttribute(ID, message.getId());
-        /*Element id = document.createElement(ID);
-        id.appendChild(document.createTextNode(message.getId()));
-        taskElement.appendChild(id);
-*/
+        messageElement.setAttribute(ID, message.getId());
+
         Element description = document.createElement(DESCRIPTION);
         description.appendChild(document.createTextNode(message.getDescription()));
-        taskElement.appendChild(description);
+        messageElement.appendChild(description);
 
         Element user = document.createElement(USER);
         user.appendChild(document.createTextNode(message.getUser()));
-        taskElement.appendChild(user);
+        messageElement.appendChild(user);
 
         SimpleDateFormat format1 = new SimpleDateFormat("dd.MM.yyyy hh:mm");
         Element time = document.createElement("date");
         time.appendChild(document.createTextNode(format1.format(new Date())));
-        taskElement.appendChild(time);
+        messageElement.appendChild(time);
 
         Element delete = document.createElement(DELETE);
         delete.appendChild(document.createTextNode(Boolean.toString(message.isDeleted())));
-        taskElement.appendChild(delete);
+        messageElement.appendChild(delete);
 
         DOMSource source = new DOMSource(document);
 
