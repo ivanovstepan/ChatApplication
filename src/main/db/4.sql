@@ -1,0 +1,1 @@
+SELECT * FROM messages where text Like '%hello%';
