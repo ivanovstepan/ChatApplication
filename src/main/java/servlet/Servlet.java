@@ -1,13 +1,14 @@
+package servlet;
 
-
+import dao.MessageDaoImpl;
 import history.XMLHistory;
 import message.Message;
 import message.MessageStore;
 import org.apache.log4j.Logger;
-import util.ServletUtil;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
+import util.ServletUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +20,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import static util.MessageUtil.*;
 
@@ -26,10 +28,12 @@ import static util.MessageUtil.*;
 public class Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static Logger logger = Logger.getLogger(Servlet.class.getName());
-
+    private static List<Message> messageList;
+    private MessageDaoImpl messageDao;
     @Override
     public void init() throws ServletException {
         try {
+            this.messageDao = new MessageDaoImpl();
             loadHistory();
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             logger.error(e);
@@ -44,10 +48,9 @@ public class Servlet extends HttpServlet {
 
         if (token != null && !"".equals(token)) {
             int index = getIndex(token);
-            //System.out.println(index+" vot Index");
             logger.info("Index " + index);
             String tasks = formResponse(index);
-            //System.out.println(tasks+" vot tasks");
+            response.setCharacterEncoding(ServletUtil.UTF_8);
             response.setContentType(ServletUtil.APPLICATION_JSON);
             PrintWriter out = response.getWriter();
             out.print(tasks);
@@ -70,6 +73,7 @@ public class Servlet extends HttpServlet {
             MessageStore.addTask(task);
             XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
+            messageDao.add(task);
         } catch (ParseException | ParserConfigurationException | SAXException | TransformerException e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -84,28 +88,15 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            System.out.println(json+" vot json");
             Message task = jsonToTask(json);
-            System.out.println(task+" vot task");
-
             String id = task.getId();
-            System.out.println(id+" vot id");
-
             Message taskToUpdate = MessageStore.getTaskById(id);
-            System.out.println(taskToUpdate+" vot tasktoupdata");
-
             if (taskToUpdate != null) {
-                System.out.println("work1");
                 taskToUpdate.setDescription(task.getDescription());
-                System.out.println(taskToUpdate+" vot description");
-
                 taskToUpdate.setUser(task.getUser());
-                System.out.println(taskToUpdate+" vot user");
-
                 XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
-                System.out.println(" GOOOD");
-
+                messageDao.update(task);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
@@ -134,6 +125,7 @@ public class Servlet extends HttpServlet {
                 taskToUpdate.setDeleted(true);
                 XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
+                messageDao.delete(task);
                 System.out.println(" GOOOD");
 
             } else {
@@ -167,7 +159,7 @@ public class Servlet extends HttpServlet {
         Message[] stubTasks = {
                 //new Message( "-1","Create markup","Anna" ),
                 //new Message("2", "Learn JavaScript")
-                };
+        };
         MessageStore.addAll(stubTasks);
         for (Message task : stubTasks) {
             try {
