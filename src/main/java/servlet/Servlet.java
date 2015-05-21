@@ -1,7 +1,6 @@
 package servlet;
 
 import dao.MessageDaoImpl;
-import history.XMLHistory;
 import message.Message;
 import message.MessageStore;
 import org.apache.log4j.Logger;
@@ -47,7 +46,7 @@ public class Servlet extends HttpServlet {
         logger.info("Token " + token);
         if (token != null && !"".equals(token)) {
             int index = getIndex(token);
-            logger.info("Index " + index);
+            //logger.info("Index " + index);
             String tasks = formResponse(index);
             response.setCharacterEncoding(ServletUtil.UTF_8);
             response.setContentType(ServletUtil.APPLICATION_JSON);
@@ -66,8 +65,8 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message task = jsonToTask(json);
-            MessageStore.addTask(task);
+            Message task = jsonToMessage(json);
+            MessageStore.addMessage(task);
             logger.info(task.toString());
             //XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
@@ -86,10 +85,10 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message message = jsonToTask(json);
+            Message message = jsonToMessage(json);
             logger.info("message to update"+toString());
             String id = message.getId();
-            Message taskToUpdate = MessageStore.getTaskById(id);
+            Message taskToUpdate = MessageStore.getMessageById(id);
             if (taskToUpdate != null) {
                 taskToUpdate.setDescription(message.getDescription());
                 taskToUpdate.setUser(message.getUser());
@@ -113,10 +112,10 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message message = jsonToTask(json);
+            Message message = jsonToMessage(json);
             logger.info("message to delete"+toString());
             String id = message.getId();
-            Message taskToUpdate = MessageStore.getTaskById(id);
+            Message taskToUpdate = MessageStore.getMessageById(id);
             if (taskToUpdate != null) {
                 taskToUpdate.setDescription(message.getDescription());
                 taskToUpdate.setUser(message.getUser());
@@ -138,7 +137,7 @@ public class Servlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     private String formResponse(int index) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(TASKS, MessageStore.getSubTasksByIndex(index));
+        jsonObject.put(MESSAGES, MessageStore.getSubMessagesByIndex(index));
         jsonObject.put(TOKEN, getToken(MessageStore.getSize()));
         return jsonObject.toJSONString();
     }
@@ -155,21 +154,6 @@ public class Servlet extends HttpServlet {
 
     }
 
-    private void addStubData() throws ParserConfigurationException, TransformerException {
-        Message[] stubTasks = {
-                //new Message( "-1","Create markup","Anna" ),
-                //new Message("2", "Learn JavaScript")
-        };
-        MessageStore.addAll(stubTasks);
-        for (Message task : stubTasks) {
-            try {
 
-                XMLHistory.addData(task);
-
-            } catch (ParserConfigurationException | SAXException | IOException | TransformerException e) {
-                logger.error(e);
-            }
-        }
-    }
 
 }

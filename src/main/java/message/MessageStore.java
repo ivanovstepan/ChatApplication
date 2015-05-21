@@ -16,7 +16,7 @@ public class MessageStore {
             return INSTANSE;
         }
 
-        public static void addTask(Message message) {
+        public static void addMessage(Message message) {
             message.setId(INSTANSE.size()+1+"");
             INSTANSE.add(message);
         }
@@ -32,19 +32,13 @@ public class MessageStore {
         public static int getSize() {
             return INSTANSE.size();
         }
-        public static void showAllMessages (){
-            for (Message message : INSTANSE){
-                System.out.println("{"+message.getUser()+"} : {"+message.getDescription()+"}");
-            }
-        }
 
-        public static List<Message> getSubTasksByIndex(int index) {
+        public static List<Message> getSubMessagesByIndex(int index) {
             return INSTANSE.subList(index, INSTANSE.size());
         }
 
-        public static Message getTaskById(String  id) {
+        public static Message getMessageById(String id) {
             for (Message message : INSTANSE) {
-                System.out.println(message+"  "+message.getId());
                 if (message.getId().equals(id)) {
                     return message;
                 }
