@@ -97,8 +97,8 @@ public class MessageDaoImpl implements MessageDao {
 			resultSet = statement.executeQuery("SELECT * FROM messages");
 			while (resultSet.next()) {
 				String id = resultSet.getString("id");
-				String description = resultSet.getString("description");
-                String user = resultSet.getString("user");
+				String description = resultSet.getString("text");
+                String user = resultSet.getString("user_name");
 				boolean done = resultSet.getBoolean("deleted");
 				messages.add(new Message(id, description, user, done));
 			}
@@ -137,8 +137,8 @@ public class MessageDaoImpl implements MessageDao {
         try {
             connection = ConnectionManager.getConnection();
             preparedStatement = connection.prepareStatement("Update messages SET text = ?, deleted = ? WHERE id = ?");
-            preparedStatement.setString(1, "message has been deleted");
-            preparedStatement.setBoolean(2, message.isDeleted());
+            preparedStatement.setString(1, message.getDescription()+"(deleted)");
+            preparedStatement.setBoolean(2, true);
             preparedStatement.setInt(3, Integer.parseInt(message.getId()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -151,7 +151,6 @@ public class MessageDaoImpl implements MessageDao {
                     logger.error(e);
                 }
             }
-
             if (connection != null) {
                 try {
                     connection.close();

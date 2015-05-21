@@ -17,6 +17,7 @@ public class MessageStore {
         }
 
         public static void addTask(Message message) {
+            message.setId(INSTANSE.size()+1+"");
             INSTANSE.add(message);
         }
 
@@ -45,7 +46,6 @@ public class MessageStore {
             for (Message message : INSTANSE) {
                 System.out.println(message+"  "+message.getId());
                 if (message.getId().equals(id)) {
-                    System.out.print(" DA ");
                     return message;
                 }
             }

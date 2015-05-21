@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -64,17 +63,16 @@ public class Servlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPost");
         String data = ServletUtil.getMessageBody(request);
-
-
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
             Message task = jsonToTask(json);
+            System.out.print("daaaaa");
             MessageStore.addTask(task);
-            XMLHistory.addData(task);
+            //XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
             messageDao.add(task);
-        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException e) {
+        } catch (ParseException /*| ParserConfigurationException | SAXException | TransformerException */e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -84,7 +82,7 @@ public class Servlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPut");
         String data = ServletUtil.getMessageBody(request);
-        System.out.println(data+" vot");
+        System.out.println(data + " vot");
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
@@ -94,13 +92,13 @@ public class Servlet extends HttpServlet {
             if (taskToUpdate != null) {
                 taskToUpdate.setDescription(task.getDescription());
                 taskToUpdate.setUser(task.getUser());
-                XMLHistory.updateData(taskToUpdate);
+                //XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
                 messageDao.update(task);
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException e) {
+        } catch (ParseException /*| ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -112,26 +110,21 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message task = jsonToTask(json);
-            String id = task.getId();
+            Message message = jsonToTask(json);
+            String id = message.getId();
             Message taskToUpdate = MessageStore.getTaskById(id);
             if (taskToUpdate != null) {
-                System.out.println("work1");
-                taskToUpdate.setDescription(task.getDescription());
-                System.out.println(taskToUpdate+" vot description");
-
-                taskToUpdate.setUser(task.getUser());
-                System.out.println(taskToUpdate+" vot user");
+                taskToUpdate.setDescription(message.getDescription());
+                taskToUpdate.setUser(message.getUser());
                 taskToUpdate.setDeleted(true);
-                XMLHistory.updateData(taskToUpdate);
+                //XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
-                messageDao.delete(task);
-                System.out.println(" GOOOD");
+                messageDao.delete(message);
 
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException e) {
+        } catch (ParseException/* | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -146,13 +139,15 @@ public class Servlet extends HttpServlet {
     }
 
     private void loadHistory() throws SAXException, IOException, ParserConfigurationException, TransformerException  {
-        if (XMLHistory.doesStorageExist()) {
+        /*if (XMLHistory.doesStorageExist()) {
             MessageStore.addAll(XMLHistory.getMessages());
             MessageStore.showAllMessages();
         } else {
             XMLHistory.createStorage();
             addStubData();
-        }
+        }*/
+        MessageStore.addAll(messageDao.selectAll());
+
     }
 
     private void addStubData() throws ParserConfigurationException, TransformerException {

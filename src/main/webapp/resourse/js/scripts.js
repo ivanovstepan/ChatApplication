@@ -1,20 +1,16 @@
 	var name;
 	var change =0;
 	var indexForChange=0;
-		var theMessage = function(id,text, userName, del) {
+		var theMessage = function(text, userName,id, del) {
 		return {
-            id: ''+id+'',
 			description:text,
 			user : userName,
+            id : ''+id+'',
             delete : !!del
 
 		};
 	};
-	var uniqueId = function() {
-		var date = Date.now();
-		var random = Math.random() * Math.random();
-		return Math.floor(date * random).toString();
-	};
+
 	var Messages = [];
 
 	var appState = {
@@ -44,10 +40,23 @@ function run(){
 		}
 		)
 		getAllMessages();
+        //updateMessages();
 
 	}
+    function updateMessages(continueWith) {
+        var url = appState.mainUrl + '?token=' + appState.token;
 
-function getAllMessages (continueWith) {
+        get(url, function (responseText) {
+                var response = JSON.parse(responseText);
+            appState.token = response.token;
+            createAllMessages(response.tasks);
+
+            continueWith && continueWith();
+        });
+        setTimeout(updateMessages, 30000);
+    }
+
+    function getAllMessages (continueWith) {
 		var url = appState.mainUrl + '?token=' + appState.token;
 		get(url, function(responseText) {
 			checkConnect();
@@ -59,25 +68,23 @@ function getAllMessages (continueWith) {
     }, function(){
     	document.getElementById('connection').className="btn offline";
     });
-        setTimeout(continueWith, 1000);
 	}
 
 function createAllMessages(messageList) {
 		for(var i = 0; i < messageList.length; i++)
         if(messageList[i].delete!="true")
 			addMessage(messageList[i]);
-    indexForChange=Messages.length;
 	}
 	
 function deleteLastMessage(){
 		var messages = document.getElementsByClassName('SeeOneMessage');
 		var names = document.getElementsByClassName('nameOfUser');
 		if(!messages.length)return;
-		for (var i=messages.length-1;i>0;i--){
-			var element  = messages[i];
-			 
+		for (var i=Messages.length-1;i>0;i--){
+			var element  = Messages[i];
 			if(names[i].innerHTML==name+" : " && messages[i].getElementsByClassName("onlyMessage")[0].innerHTML!=" message has been deleted"){
-                deleteMessageFromServer(theMessage(i,"message has been deleted",name,true), function () {  });
+                element.delete=false;
+                deleteMessageFromServer(element, function () {  });
 		        messages[i].innerHTML='<span class ="nameOfUser">' + name + ' : </span><span class="onlyMessage"> message has been deleted</span>'
 		        break;
 			}
@@ -86,7 +93,7 @@ function deleteLastMessage(){
 
 function deleteMessageFromServer(message,continueWith) {
         del(appState.mainUrl + '?id=' + message.id, JSON.stringify(message), function () {
-            getAllMessages();
+            updateMessages();
         });
 	}
 
@@ -96,16 +103,19 @@ function editLastMessage(){
 		var messages = document.getElementsByClassName('SeeOneMessage');
 		var names = document.getElementsByClassName('nameOfUser');
 		if(!messages.length)return;
-		for (var i=messages.length-1;i>0;i--){
-			var element  = messages[i];
+		for (var i=Messages.length-1;i>0;i--){
+			var element  = Messages[i];
 			if(names[i].innerHTML==name+" : " && messages[i].getElementsByClassName("onlyMessage")[0].innerHTML!=" message has been deleted" ){
-				document.getElementById("MessageText").value= element.lastChild.innerHTML;		
-				indexForChange=i; 
+				document.getElementById("MessageText").value = element.description;
+                indexForChange=element.id;
 				break;     
 			}
 		}
 
-	}
+}
+
+
+
 
 function delegateName(evtObj){
 		if(evtObj.type === 'click' && evtObj.target.classList.contains('btn-name')){
@@ -166,21 +176,24 @@ function delegateEvent(evtObj) {
 
 function onAddButtonClick(){
 		var MessageText = document.getElementById('MessageText');
-		var newMessage = theMessage(indexForChange,MessageText.value,name);
-        indexForChange++;
+		var newMessage = theMessage(MessageText.value,name,0);
 		if(MessageText.value == '')
 			return;
-		MessageText.value = '';
-		if(change==1){
-			change=0;
-            updateMessage(newMessage);
-			changeMessages(newMessage, function () {  });
-		}
-		else
 
-		storeMessages(newMessage, function() {
-			console.log('message.Message sent ' + newMessage.text);
-		});
+    if(change==1){
+        change=0;
+        var editmessage=theMessage(MessageText.value,name,indexForChange)
+        MessageText.value = '';
+        updateMessage(editmessage);
+        changeMessages(editmessage, function(){} );
+    }
+    else {
+        MessageText.value = '';
+        storeMessages(newMessage, function () {
+            console.log('message.Message sent ' + newMessage.text);
+        });
+    }
+
 	}
 function updateMessage(message){
         var messages = document.getElementsByClassName('SeeOneMessage');
@@ -197,10 +210,10 @@ function updateMessage(message){
     }
 
 function changeMessages(changeMessage, continueWith) {
-    put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage), function () {
-        getAllMessages();
-    });
+    put(appState.mainUrl + '?id=' + changeMessage.id, JSON.stringify(changeMessage),
+        function (){updateMessages()});
 	}
+
 function addAllMessages(message) {
     if (Messages[message.id] == null) {
        var item = createMessage(message);
@@ -210,7 +223,6 @@ function addAllMessages(message) {
     }
 	}
 function addMessage(message) {
-
 		if(!message){
 			return;
 		}
@@ -260,9 +272,7 @@ function del(url, data, continueWith, continueWithError) {
     ajax('DELETE', url, data, continueWith, continueWithError);
 }
 function storeMessages(sendMessage, continueWith) {
-    post(appState.mainUrl, JSON.stringify(sendMessage), function () {
-        getAllMessages();
-    });
+    post(appState.mainUrl, JSON.stringify(sendMessage), function(){updateMessages()});
 }
 
 function isError(text) {
