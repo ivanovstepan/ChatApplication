@@ -50,7 +50,6 @@ public final class XMLHistory {
 
 
     public static synchronized void addData(Message message) throws ParserConfigurationException, SAXException, IOException, TransformerException {
-        System.out.println(message + " vot real message");
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(STORAGE_LOCATION);
@@ -94,9 +93,6 @@ public final class XMLHistory {
         Document document = documentBuilder.parse(STORAGE_LOCATION);
         document.getDocumentElement().normalize();
         Node taskToUpdate = getNodeById(document, message.getId());
-        System.out.println(message+" vot MESSAGE ");
-        System.out.println(message.getId());
-        System.out.println(taskToUpdate+" vot NODE ");
         if (taskToUpdate != null) {
 
             NodeList childNodes = taskToUpdate.getChildNodes();
@@ -162,9 +158,7 @@ public final class XMLHistory {
 
     private static Node getNodeById(Document doc, String id) throws XPathExpressionException {
         XPath xpath = XPathFactory.newInstance().newXPath();
-        System.out.println(xpath+" vot xpath");
         XPathExpression expr = xpath.compile("//" + MESSAGE + "[@id='" + id + "']");
-        System.out.println(expr+" vot expr");
         return (Node) expr.evaluate(doc, XPathConstants.NODE);
     }
 

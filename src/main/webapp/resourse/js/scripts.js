@@ -39,27 +39,30 @@ function run(){
 				deleteLastMessage(e);
 		}
 		)
-		getAllMessages();
-        //updateMessages();
+		//getAllMessages();
+        updateMessages();
 
 	}
     function updateMessages(continueWith) {
         var url = appState.mainUrl + '?token=' + appState.token;
 
         get(url, function (responseText) {
+            checkConnect();
                 var response = JSON.parse(responseText);
             appState.token = response.token;
             createAllMessages(response.tasks);
 
             continueWith && continueWith();
+        },function(){
+            document.getElementById('connection').className="btn offline";
         });
-        setTimeout(updateMessages, 30000);
+        setTimeout(updateMessages, 10000);
     }
 
-    function getAllMessages (continueWith) {
+    /*function getAllMessages (continueWith) {
 		var url = appState.mainUrl + '?token=' + appState.token;
 		get(url, function(responseText) {
-			checkConnect();
+            checkConnect();
 		var response = JSON.parse(responseText);
 		appState.token = response.token;
         createAllMessages(response.tasks);
@@ -68,7 +71,7 @@ function run(){
     }, function(){
     	document.getElementById('connection').className="btn offline";
     });
-	}
+	}*/
 
 function createAllMessages(messageList) {
 		for(var i = 0; i < messageList.length; i++)

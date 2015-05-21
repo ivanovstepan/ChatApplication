@@ -34,6 +34,7 @@ public class Servlet extends HttpServlet {
         try {
             this.messageDao = new MessageDaoImpl();
             loadHistory();
+            logger.info("init finished");
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
             logger.error(e);
         }
@@ -44,7 +45,6 @@ public class Servlet extends HttpServlet {
         logger.info("doGet");
         String token = request.getParameter(TOKEN);
         logger.info("Token " + token);
-
         if (token != null && !"".equals(token)) {
             int index = getIndex(token);
             logger.info("Index " + index);
@@ -67,8 +67,8 @@ public class Servlet extends HttpServlet {
         try {
             JSONObject json = stringToJson(data);
             Message task = jsonToTask(json);
-            System.out.print("daaaaa");
             MessageStore.addTask(task);
+            logger.info(task.toString());
             //XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
             messageDao.add(task);
@@ -76,25 +76,27 @@ public class Servlet extends HttpServlet {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
+        logger.info("doPost finished");
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         logger.info("doPut");
         String data = ServletUtil.getMessageBody(request);
-        System.out.println(data + " vot");
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message task = jsonToTask(json);
-            String id = task.getId();
+            Message message = jsonToTask(json);
+            logger.info("message to update"+toString());
+            String id = message.getId();
             Message taskToUpdate = MessageStore.getTaskById(id);
             if (taskToUpdate != null) {
-                taskToUpdate.setDescription(task.getDescription());
-                taskToUpdate.setUser(task.getUser());
+                taskToUpdate.setDescription(message.getDescription());
+                taskToUpdate.setUser(message.getUser());
                 //XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
-                messageDao.update(task);
+                messageDao.update(message);
+                logger.info("updated message: " + message.toString());
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
@@ -102,6 +104,7 @@ public class Servlet extends HttpServlet {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
+        logger.info("doPut finished");
     }
 
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -111,6 +114,7 @@ public class Servlet extends HttpServlet {
         try {
             JSONObject json = stringToJson(data);
             Message message = jsonToTask(json);
+            logger.info("message to delete"+toString());
             String id = message.getId();
             Message taskToUpdate = MessageStore.getTaskById(id);
             if (taskToUpdate != null) {
@@ -128,6 +132,7 @@ public class Servlet extends HttpServlet {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
+        logger.info("doDelete finished");
     }
 
     @SuppressWarnings("unchecked")

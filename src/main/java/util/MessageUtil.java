@@ -34,7 +34,6 @@ public final class MessageUtil {
     }
 
     public static Message jsonToTask(JSONObject json) {
-        System.out.print(json+ " vot");
         Object id = json.get(ID);
         Object description = json.get(DESCRIPTION);
         Object user = json.get(USER);
