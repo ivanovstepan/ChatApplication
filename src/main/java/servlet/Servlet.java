@@ -46,15 +46,22 @@ public class Servlet extends HttpServlet {
         logger.info("Token " + token);
         if (token != null && !"".equals(token)) {
             int index = getIndex(token);
-            //logger.info("Index " + index);
-            String tasks = formResponse(index);
-            response.setCharacterEncoding(ServletUtil.UTF_8);
-            response.setContentType(ServletUtil.APPLICATION_JSON);
-            PrintWriter out = response.getWriter();
-            out.print(tasks);
-            out.flush();
+            if(MessageStore.countOfMessages(index)==0){
+                logger.info("GET - Response status: 304");
+                response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+            }
+            else {
+                //logger.info("Index " + index);
+                String tasks = formResponse(index);
+                response.setCharacterEncoding(ServletUtil.UTF_8);
+                response.setContentType(ServletUtil.APPLICATION_JSON);
+                PrintWriter out = response.getWriter();
+                out.print(tasks);
+                out.flush();
+            }
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "'token' parameter needed");
+            logger.error(HttpServletResponse.SC_BAD_REQUEST + "'token' parameter needed");
         }
     }
 
@@ -74,6 +81,7 @@ public class Servlet extends HttpServlet {
         } catch (ParseException /*| ParserConfigurationException | SAXException | TransformerException */e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            logger.error(HttpServletResponse.SC_BAD_REQUEST);
         }
         logger.info("doPost finished");
     }

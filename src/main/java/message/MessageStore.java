@@ -45,6 +45,9 @@ public class MessageStore {
             }
             return null;
         }
+    public static int countOfMessages(int index){
+        return INSTANSE.subList(index,INSTANSE.size()).size();
+    }
 
 }
 
