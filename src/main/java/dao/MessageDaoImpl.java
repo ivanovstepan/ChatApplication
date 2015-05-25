@@ -13,11 +13,12 @@ public class MessageDaoImpl implements MessageDao {
 	private static Logger logger = Logger.getLogger(MessageDaoImpl.class.getName());
 
 	@Override
-	public void add(Message message) {
+	public void add(Message message) throws SQLException{
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		try {
             connection = ConnectionManager.getConnection();
+            connection.setAutoCommit(false);
             Date utilDate = new java.util.Date();
 			preparedStatement = connection.prepareStatement("INSERT INTO messages (id, text, date, user_name, deleted) VALUES (?, ?, ?, ?, ?)");
 			preparedStatement.setInt(1, Integer.parseInt(message.getId()));
@@ -26,7 +27,9 @@ public class MessageDaoImpl implements MessageDao {
             preparedStatement.setString(4, message.getUser());
 			preparedStatement.setBoolean(5, message.isDeleted());
 			preparedStatement.executeUpdate();
+            connection.commit();
 		} catch (SQLException e) {
+            connection.rollback();
 			logger.error(e);
 		} finally {
 			if (preparedStatement != null) {
@@ -48,17 +51,20 @@ public class MessageDaoImpl implements MessageDao {
 	}
 
 	@Override
-	public void update(Message message) {
+	public void update(Message message) throws SQLException {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		try {
 			connection = ConnectionManager.getConnection();
+            connection.setAutoCommit(false);
 			preparedStatement = connection.prepareStatement("Update messages SET text = ?, deleted = ? WHERE id = ?");
 			preparedStatement.setString(1, message.getDescription());
 			preparedStatement.setBoolean(2, message.isDeleted());
 			preparedStatement.setInt(3, Integer.parseInt(message.getId()));
 			preparedStatement.executeUpdate();
+            connection.commit();
 		} catch (SQLException e) {
+            connection.rollback();
 			logger.error(e);
 		} finally {
 			if (preparedStatement != null) {
@@ -131,17 +137,20 @@ public class MessageDaoImpl implements MessageDao {
 	}
 
 	@Override
-	public void delete(Message message) {
+	public void delete(Message message) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
             connection = ConnectionManager.getConnection();
+            connection.setAutoCommit(false);
             preparedStatement = connection.prepareStatement("Update messages SET text = ?, deleted = ? WHERE id = ?");
             preparedStatement.setString(1, message.getDescription()+"(deleted)");
             preparedStatement.setBoolean(2, true);
             preparedStatement.setInt(3, Integer.parseInt(message.getId()));
             preparedStatement.executeUpdate();
+            connection.commit();
         } catch (SQLException e) {
+            connection.rollback();
             logger.error(e);
         } finally {
             if (preparedStatement != null) {

@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.List;
 
 import static util.MessageUtil.*;
@@ -78,7 +79,7 @@ public class Servlet extends HttpServlet {
             //XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
             messageDao.add(task);
-        } catch (ParseException /*| ParserConfigurationException | SAXException | TransformerException */e) {
+        } catch (SQLException | ParseException /*| ParserConfigurationException | SAXException | TransformerException */e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             logger.error(HttpServletResponse.SC_BAD_REQUEST);
@@ -107,7 +108,7 @@ public class Servlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException /*| ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
+        } catch ( SQLException | ParseException /*| ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -135,7 +136,7 @@ public class Servlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Task does not exist");
             }
-        } catch (ParseException/* | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
+        } catch (SQLException | ParseException/* | ParserConfigurationException | SAXException | TransformerException | XPathExpressionException*/ e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
