@@ -1,7 +1,6 @@
 package message;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,17 +11,9 @@ public class MessageStore {
         private MessageStore() {
         }
 
-        public static List<Message> getStorage() {
-            return INSTANSE;
-        }
-
         public static void addMessage(Message message) {
             message.setId(INSTANSE.size()+1+"");
             INSTANSE.add(message);
-        }
-
-        public static void addAll(Message[] messages) {
-            INSTANSE.addAll(Arrays.asList(messages));
         }
 
         public static void addAll(List<Message> messages) {
