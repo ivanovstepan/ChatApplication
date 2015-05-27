@@ -12,6 +12,8 @@ public interface MessageDao {
 
 	void delete(Message message) throws SQLException;
 
+    void addUser (String user) throws SQLException;
+
 	Message selectById(Message task);
 
 	List<Message> selectAll();

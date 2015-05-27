@@ -169,5 +169,37 @@ public class MessageDaoImpl implements MessageDao {
             }
         }
 	}
+    @Override
+    public void addUser(String user) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = ConnectionManager.getConnection();
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement("INSERT INTO users (name) VALUES (?)");
+            preparedStatement.setString(1,user);
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            logger.error(e);
+        } finally {
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
 
 }

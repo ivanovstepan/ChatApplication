@@ -27,7 +27,8 @@ import static util.MessageUtil.*;
 public class Servlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static Logger logger = Logger.getLogger(Servlet.class.getName());
-    private static List<Message> messageList;
+    private static List<String> users;
+
     private MessageDaoImpl messageDao;
     @Override
     public void init() throws ServletException {
@@ -53,11 +54,11 @@ public class Servlet extends HttpServlet {
             }
             else {
                 //logger.info("Index " + index);
-                String tasks = formResponse(index);
+                String messages = formResponse(index);
                 response.setCharacterEncoding(ServletUtil.UTF_8);
                 response.setContentType(ServletUtil.APPLICATION_JSON);
                 PrintWriter out = response.getWriter();
-                out.print(tasks);
+                out.print(messages);
                 out.flush();
             }
         } else {
@@ -73,12 +74,16 @@ public class Servlet extends HttpServlet {
         logger.info(data);
         try {
             JSONObject json = stringToJson(data);
-            Message task = jsonToMessage(json);
-            MessageStore.addMessage(task);
-            logger.info(task.toString());
+            Message message = jsonToMessage(json);
+            String user= message.getUser();
+            MessageStore.addMessage(message);
+
+            logger.info(message.toString());
             //XMLHistory.addData(task);
             response.setStatus(HttpServletResponse.SC_OK);
-            messageDao.add(task);
+            messageDao.add(message);
+            if(MessageStore.addUser(user))
+                messageDao.addUser(user);
         } catch (SQLException | ParseException /*| ParserConfigurationException | SAXException | TransformerException */e) {
             logger.error(e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -97,10 +102,10 @@ public class Servlet extends HttpServlet {
             Message message = jsonToMessage(json);
             logger.info("message to update"+toString());
             String id = message.getId();
-            Message taskToUpdate = MessageStore.getMessageById(id);
-            if (taskToUpdate != null) {
-                taskToUpdate.setDescription(message.getDescription());
-                taskToUpdate.setUser(message.getUser());
+            Message messageToUpdate = MessageStore.getMessageById(id);
+            if (messageToUpdate != null) {
+                messageToUpdate.setDescription(message.getDescription());
+                messageToUpdate.setUser(message.getUser());
                 //XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
                 messageDao.update(message);
@@ -124,11 +129,11 @@ public class Servlet extends HttpServlet {
             Message message = jsonToMessage(json);
             logger.info("message to delete"+toString());
             String id = message.getId();
-            Message taskToUpdate = MessageStore.getMessageById(id);
-            if (taskToUpdate != null) {
-                taskToUpdate.setDescription(message.getDescription());
-                taskToUpdate.setUser(message.getUser());
-                taskToUpdate.setDeleted(true);
+            Message messageToUpdate = MessageStore.getMessageById(id);
+            if (messageToUpdate != null) {
+                messageToUpdate.setDescription(message.getDescription());
+                messageToUpdate.setUser(message.getUser());
+                messageToUpdate.setDeleted(true);
                 //XMLHistory.updateData(taskToUpdate);
                 response.setStatus(HttpServletResponse.SC_OK);
                 messageDao.delete(message);
